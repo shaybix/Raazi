@@ -1,6 +1,5 @@
 import urllib2
 from bs4 import BeautifulSoup
-from urllib2 import urlopen
 
 categoryUrl = 'http://shamela.ws/index.php/category/'
 bookUrl = 'http://shamela.ws/index.php/book/'
@@ -31,24 +30,8 @@ def main(category=127):
             print "Access Denied!"
 
         else:
-            print "Something happened! Error code: ", e.code
-
-    except urllib2.URLError, e:
-        print "Some other error happened: ", e.reason
-        return False
-
-
-def singleBook(bookId=None, bookUrl=None):
-    try:
-        f = open('book_' + str(bookId) + '.txt', 'a')
-
-        html = urllib2.open(bookUrl + str(bookId)).read()
-        html = BeautifulSoup(html)
-
-
-"""
-This is some comment
-"""
+            print "Something happened! Error code: ", e.reason
+            return False
 
 
 
