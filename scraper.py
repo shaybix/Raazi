@@ -6,6 +6,11 @@ categoryUrl = 'http://shamela.ws/index.php/category/'
 bookUrl = 'http://shamela.ws/index.php/book/'
 
 
+"""
+This function is responsible for loading an entire category page and scrape from it
+the entire books listing along with the title of the book and store them in a txt file.
+"""
+
 def getCategory(category=127):
     try:
         f = open('url.txt', 'w')
@@ -34,43 +39,48 @@ def getCategory(category=127):
             print "Something happened! Error code: ", e.reason
             return False
 
+"""
+This function is called by the getUrl() function and is passed a url for the book page
+and this code gets that page, and looks for url for the online shamela reading app in order
+to extract the json data from there.
+"""
 
 def getBook(bookUrl):
-	count = 1
-	url = bookUrl.split('/')
-	pageUrl = url[0] + '//' + url[2] + '/' + url[3] +  '/book/' + 'get_page/' + url[-1].split('-')[-1] + '/'
-	print pageUrl
-	while(urllib2.urlopen(pageUrl + str(count)).getcode() == 200):
-		page = urllib2.urlopen(pageUrl + str(count)).read()
-		
-		print page
-		
-		count += 1
-	
-	
-	
+    count = 1
+    url = bookUrl.split('/')
+    pageUrl = url[0] + '//' + url[2] + '/' + url[3] +  '/book/' + 'get_page/' + url[-1].split('-')[-1] + '/'
+    print pageUrl
+    while(urllib2.urlopen(pageUrl + str(count)).getcode() == 200):
+        page = urllib2.urlopen(pageUrl + str(count)).read()
+        print page
+        count += 1
+
+
+"""
+This function is responsible for reading the urls that are stored in a text file.
+"""
 def getUrl():
-	count = 0
-	try:
+    count = 0
+    try:
 #		Reading from file that contains urls for the books
-		f = open('url.txt', 'r')
-		
+        f = open('url.txt', 'r')
+
 #		extract url and names for each book and put in list
-		data = f.readlines()
-		for line in data:
+        data = f.readlines()
+        for line in data:
 #			store regex pattern in page
-			urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', line)
-			url = urls[0]
-			authorPage = urllib2.urlopen(url).read()
-			links = re.findall('http://shamela.ws(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', authorPage)
-			bookUrl = links[2]
-			
-			getBook(bookUrl)
-			
-			return 0
-		
-	except Exception:
-		pass
+            urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', line)
+            url = urls[0]
+            authorPage = urllib2.urlopen(url).read()
+            links = re.findall('http://shamela.ws(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', authorPage)
+            bookUrl = links[2]
+
+            getBook(bookUrl)
+
+            return 0
+
+    except Exception:
+        pass
 
 #getCategory()
 
