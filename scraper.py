@@ -1,6 +1,6 @@
 import urllib2
 from bs4 import BeautifulSoup
-import re
+import re, os
 
 categoryUrl = 'http://shamela.ws/index.php/category/'
 bookUrl = 'http://shamela.ws/index.php/book/'
@@ -59,6 +59,7 @@ def getBook(bookUrl):
 """
 This function is responsible for reading the urls that are stored in a text file.
 """
+
 def getUrl():
     count = 0
     try:
@@ -78,10 +79,33 @@ def getUrl():
             getBook(bookUrl)
 
             return 0
-
-    except Exception:
+    except IOError:
         pass
+
+
+"""
+Still work in progress, but function receives data and stores each book in its own .txt file
+ready for ElasticSearch Bulk indexing.
+"""
+def storeData(data):
+
+    directory = '/data'
+
+    if not os.path.exists(directory):
+        print 'data exists!'
+        file = open(bookId + '.txt', 'w')
+
+
+    else:
+        print "data doesn't exist"
+
+
+
+
+
 
 #getCategory()
 
-getUrl()
+# getUrl()
+
+storeData('hello world')
