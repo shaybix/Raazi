@@ -1,11 +1,12 @@
 import urllib2
 from bs4 import BeautifulSoup
+import re
 
 categoryUrl = 'http://shamela.ws/index.php/category/'
 bookUrl = 'http://shamela.ws/index.php/book/'
 
 
-def main(category=127):
+def getCategory(category=127):
     try:
         f = open('url.txt', 'w')
 
@@ -33,6 +34,22 @@ def main(category=127):
             print "Something happened! Error code: ", e.reason
             return False
 
+def getUrl(bookUrl=None):
+	
+	try:
+#		Reading from file that contains urls for the books
+		f = open('url.txt', 'r')
+		
+#		extract url and names for each book and put in list
+		data = f.readlines()
+		for line in data:
+#			store regex pattern in page
+		
+		
+	
+	except Exception:
+		pass
 
+#getCategory()
 
-main()
+getUrl()
