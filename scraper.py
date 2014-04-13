@@ -6,10 +6,10 @@ categoryUrl = 'http://shamela.ws/index.php/category/'
 bookUrl = 'http://shamela.ws/index.php/book/'
 
 
-"""
-This function is responsible for loading an entire category page and scrape from it
-the entire books listing along with the title of the book and store them in a txt file.
-"""
+
+# This function is responsible for loading an entire category page and scrape
+# the entire listing for the title of the book and url and store them in a txt file.
+
 
 def getCategory(category=127):
     try:
@@ -39,11 +39,11 @@ def getCategory(category=127):
             print "Something happened! Error code: ", e.reason
             return False
 
-"""
-This function is called by the getUrl() function and is passed a url for the book page
-and this code gets that page, and looks for url for the online shamela reading app in order
-to extract the json data from there.
-"""
+
+# This function is called by the getUrl() function and is passed a url for the book page
+# and this code gets that page, and looks for url for the online shamela reading app in order
+# to extract the json data from there.
+
 
 def getBook(bookUrl):
     count = 1
@@ -56,9 +56,9 @@ def getBook(bookUrl):
         count += 1
 
 
-"""
-This function is responsible for reading the urls that are stored in a text file.
-"""
+
+# This function is responsible for reading the urls that are stored in a text file.
+
 
 def getUrl():
     count = 0
@@ -83,10 +83,10 @@ def getUrl():
         pass
 
 
-"""
-Still work in progress, but function receives data and stores each book in its own .txt file
-ready for ElasticSearch Bulk indexing.
-"""
+
+# Still work in progress, but function receives data and stores each book in its own .txt file
+# ready for ElasticSearch Bulk indexing.
+
 def storeData(data):
 
     directory = '/data'
