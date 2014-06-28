@@ -12,12 +12,11 @@ bookBase = 'http://shamela.ws/browse.php/book-'
 
 
 def getBook(bookUrl):
-    count = 0
+    count = 1
     pageCount = 1
-    file = open('index.txt', 'wb')
+    file = open('index.txt', 'a+')
     while (count < max ):
-        print max
-        print count
+        print str(count) + "/" + str(max)
         url = bookUrls[count].split('/')
         bookId = url[-1].split('-')[-1]
         pageUrl = url[0] + '//' + url[2] + '/' + url[3] +  '/book/' + 'get_page/' + bookId + '/'
@@ -30,6 +29,7 @@ def getBook(bookUrl):
             print index
 
             pageCount += 1
+#        print "Book Count = " + str(count) + " " + "Page Count = " + str(pageCount)
         count += 1
         pageCount = 1
 	
