@@ -25,12 +25,13 @@ def getBook(bookUrl):
         while(urllib2.urlopen(pageUrl + str(pageCount)).getcode() == 200):
 
             page = urllib2.urlopen(pageUrl + str(pageCount)).read()
-            index = '\n{ "index" : { "_index" : "books", "_type" : "book_one", "_id" : "' + str(page) + '" } }\n' + str(page)
-            file.write('\n{ "index" : { "_index" : "books", "_type" : "book_one", "_id" : "' + str(page) + '" } }\n' + str(page))
+            index = '\n{ "index" : { "_index" : "books", "_type" : "tafsir", "_id" : "' + "b" + str(bookId) + "_p" + str(pageCount) + '" } }\n' + str(page)
+            file.write('\n{ "index" : { "_index" : "books", "_type" : "tafsir", "_id" : "' + "b" + str(bookId) + "_p" + str(pageCount) + '" } }\n' + str(page))
             print index
 
             pageCount += 1
-        return 0
+        count += 1
+        pageCount = 1
 	
 
 # This function is responsible for reading the urls that are stored in a text file.
