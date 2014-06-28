@@ -19,7 +19,7 @@ def fetch(page):
 	url = 'http://shamela.ws/browse.php/book/get_page/' + str(book) + '/' + str(page)
 	webpage = urllib2.urlopen(url).read()
 	data = '\n{ "index" : { "_index" : "books", "_type" : "book_one", "_id" : "' + str(page) + '" } }\n' + str(webpage)
-	file.write('\n{ "index" : { "_index" : "books", "_type" : "book_one", "_id" : "' + str(page) + '" } }\n' + str(webpage))
+#	file.write('\n{ "index" : { "_index" : "books", "_type" : "book_one", "_id" : "' + str(page) + '" } }\n' + str(webpage))
 	print data
 	
 	

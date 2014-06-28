@@ -9,8 +9,8 @@ bookUrl = 'http://shamela.ws/index.php/book/'
 # to extract the json data from there.
 
 
-def getBook(bookUrls):
-    
+def getBook(bookUrl):
+    global count
     while (count <= max ):
         url = bookUrls[count].split('/')
         bookId = url[-1].split('-')[-1]
@@ -29,7 +29,7 @@ def getBook(bookUrls):
 
 def getUrl():
     global data
-    global count
+
     global bookUrls
     global max
     bookUrls = []
@@ -47,6 +47,7 @@ def getUrl():
             authorPage = urllib2.urlopen(url).read()
             links = re.findall('http://shamela.ws(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', authorPage)
             bookUrl = links[2]
+            print bookUrl
             bookUrls.append(bookUrl)
         max = len(bookUrls)
         print max            
