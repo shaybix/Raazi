@@ -12,7 +12,7 @@ bookBase = 'http://shamela.ws/browse.php/book-'
 
 
 def getBook(bookUrl):
-    count = 1
+    count = 4
     pageCount = 1
     file = open('index.txt', 'a+')
     while (count < max ):
