@@ -8,7 +8,7 @@ bookBase = 'http://shamela.ws/browse.php/book-'
 
 # This function is called by the getUrl() function and is passed a url for the book page
 # and this code gets that page, and looks for url for the online shamela reading app in order
-# to extract the json data from there.
+# to extract the json data from there.  Important!
 
 
 def getBook(bookUrl):
