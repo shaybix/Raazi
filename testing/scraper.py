@@ -104,8 +104,7 @@ def storeData(data):
 
 
 
-getCategory()
-
-# getUrl()
+#getCategory()
+getUrl()
 
 #storeData('hello world')

@@ -28,7 +28,7 @@ def getAuthor():
 		
 		for i in link_tag:
 			print i.text +  " - " + website + i.a['href']
-			data =  i.text +  " - " + website + i.a['href']
+			data =  i.text +  " - " + website + i.a['href']§§§
 			data = data.encode('utf-16')
 			file.write(data)
 			
