@@ -21,10 +21,12 @@ def getCategory(category=127):
         count = 1
         for each in html:
             each = each.a
+            
+            print each.string
 
-            each = "[" + str(count) + "] " + each.string + " | " + "http://shamela.ws" + each['href'] + "\n"
-            print each
-            f.write(each.encode('utf-8'))
+#            each = "[" + str(count) + "] " + each.string + " | " + "http://shamela.ws" + each['href'] + "\n"
+#            print each
+#            f.write(each.encode('utf-8'))
             count += 1
         f.close()
     except urllib2.URLError, e:
@@ -104,7 +106,7 @@ def storeData(data):
 
 
 
-#getCategory()
-getUrl()
+getCategory()
+#getUrl()
 
 #storeData('hello world')
