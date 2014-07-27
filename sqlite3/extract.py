@@ -2,6 +2,8 @@ import sqlite3
 import json
 import sys
 import subprocess
+
+
 from optparse import OptionParser
 
 # import elasticsearch
@@ -115,26 +117,47 @@ def fetch_chapters(book_id):
     return chapters
 
 
-def validator(arguments):
+def validator():
+    """
+    validate the arguments giving through the commandline
+
+    :rtype : bool
     """
 
-    Get the arguments passed through the commandline, and validate.
+    usage = "usage: python %prog [options] arg1 arg2"
+    parser = OptionParser(usage=usage)
+    parser.add_option("-i", dest="input_file", help="give BOK file to read from")
+    parser.add_option("-o",dest="output_file", help="the desired json output filename")
+    parser.add_option("-q", "--quiet", action="store_false", dest="verbose")
 
-    :type arguments: list
-    :param arguments:
-    :rtype : object
-    """
+    options, args = parser.parse_args()
 
-    # TODO validate the arguments passed through and return
-    parser = OptionParser()
+    # TODO find way to check if neccessary arguments have been passed before continuing
 
-    pass
+    print len(args)
+    # if len(args) < 4:
+    #     parser.error("incorrect number of arguments")
+
+    # TODO validate the filetypes given for input and output before continuing
+    bok_file = options.input_file
+    bok_file = bok_file.split('.')
+    json_file = options.output_file
+    json_file = json_file.split('.')
+    if not bok_file[-1] == "bok":
+        pass
+    elif not json_file[-1] == 'json':
+        print "Must provide json filetype for output"
+        return 0
+    else:
+        # TODO is there need to validate the .bok file itself?
+        print "correct filetypes given!"
+
+
 
 
 conn = sqlite3.connect('sample.sqlite3')
 c = conn.cursor()
 
 if __name__ == "__main__":
-
-    # TODO create an arguments validator
-    pass
+    # TODO once validated process the data argument
+    validator()
