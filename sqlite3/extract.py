@@ -2,9 +2,12 @@ import sqlite3
 import json
 import sys
 import subprocess
+import os
 
 from optparse import OptionParser
-# import elasticsearch
+
+# TODO need to set MDB_JET3_CHARSET="cp1256" some how
+# TODO create function for preparing ES bulk index
 
 
 def fetch_main(sql_db):
@@ -120,78 +123,95 @@ def validator():
     # if len(args) < 4:
     #     parser.error("incorrect number of arguments")
 
+    if options.input_file and options.output_file:
+        bok_file = options.input_file
+        bok_file_split = bok_file.split('.')
+        json_file = options.output_file
+        json_file_split = json_file.split('.')
 
-    bok_file = options.input_file
-    bok_file_split = bok_file.split('.')
-    json_file = options.output_file
-    json_file_split = json_file.split('.')
-
-    if not bok_file_split[-1] == "bok":
-        pass
-    elif not json_file_split[-1] == 'json':
-        print "Must provide json filetype for output"
-        pass
+        if not bok_file_split[-1] == "bok":
+            print "Must provide bok filetype for input"
+            pass
+        elif not json_file_split[-1] == 'json':
+            print "Must provide json filetype for output"
+            pass
+        else:
+            return [bok_file, json_file]
     else:
-        return [bok_file, json_file]
+        print "some help should be printed here"
+        pass
 
 
-def db(bok_file):
+def db_init(bok_file):
     """
+    initialise the db connection with sqlite3 and pass through connection object and filename
 
-
-    :rtype : object
+    :rtype : list
     :param bok_file:
     :return:
     """
-    sql_db = bok_file.split('.')[0]
-    sql_db += ".db"
 
-    connection = sqlite3.connect(sql_db)
+    db_file = bok_file.split('.')[0]
+    db_file += ".db"
 
-    return [connection, sql_db]
+    connection = sqlite3.connect(db_file)
+    return [connection, db_file]
 
 
-def export(bok_file):
+def export(files):
+    """
+    takes a list as a parameter at the moment, and takes the bok filename and passes on to export
+    as mysql creating an sqlite3 database with the same filename.
+
+
+    :type files: list
+    :rtype : str
+    :param files:
     """
 
-    :param bok_file:
-    """
-    database = bok_file[0]
-    DB = db(database)
+    # TODO needs refactoring as it accepts a list though not necessary!
+    database = files[0]
+    DB = db_init(database)
     con = DB[0]
     sql_file = DB[1]
     c = con.cursor()
 
-    # print 'setting charset....'
-    # subprocess.Popen(['MDB_JET3_CHARSET="cp1256"'])
-
+    os.environ['MDB_JET3_CHARSET'] = "cp1256"
+    
     # Dump the schema for the DB
+    print database
     print 'dumping msql schema....'
+
     reply = subprocess.Popen(["mdb-schema", database, "mysql"],
                              stdout=subprocess.PIPE).communicate()[0]
+
     c.executescript(reply)
     con.commit()
 
-    print 'dumping tables....'
     table_names = subprocess.Popen(["mdb-tables", "-1", database],
                                    stdout=subprocess.PIPE).communicate()[0]
     tables = table_names.splitlines()
 
     print 'begin executing mysql....'
+
     c.execute("BEGIN;")
+
     sys.stdout.flush()
 
     for table in tables:
         if table != '':
-            print 'dumping ' + table + '....'
+            print 'dumping table -' + table + '....'
+
             reply = subprocess.Popen(["mdb-export", "-I", "mysql", database, table],
                                      stdout=subprocess.PIPE).communicate()[0]
             c.executescript(reply)
 
     print 'committing it all to the database....'
+
     con.commit()
     sys.stdout.flush()
     con.close()
+
     return sql_file
 
 
