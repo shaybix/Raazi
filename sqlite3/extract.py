@@ -4,54 +4,7 @@ import sys
 import subprocess
 
 from optparse import OptionParser
-
 # import elasticsearch
-
-
-def index():
-    """
-    :rtype : object
-    """
-
-    # TODO automate process for indexing the document into Elasticsearch
-
-    pass
-
-
-def export(bok_file):
-    """
-
-
-
-    :type bok_file: str
-    :param bok_file:
-    :rtype : str
-    """
-
-
-    # TODO accept bok_file as param and begin and convert to sqlite3
-
-    # # Dump the schema for the DB
-    # subprocess.call(["mdb-schema", DATABASE, "mysql"])
-    #
-    # # Get the list of table names with "mdb-tables"
-    # table_names = subprocess.Popen(["mdb-tables", "-1", DATABASE],
-    #                                stdout=subprocess.PIPE).communicate()[0]
-    # tables = table_names.splitlines()
-    #
-    # print "BEGIN;" # start a transaction, speeds things up when importing
-    # sys.stdout.flush()
-    #
-    # # Dump each table as a CSV file using "mdb-export",
-    # # converting " " in table names to "_" for the CSV filenames.
-    # for table in tables:
-    #     if table != '':
-    #         subprocess.call(["mdb-export", "-I", "mysql", DATABASE, table])
-    #
-    # print "COMMIT;" # end the transaction
-    # sys.stdout.flush()
-
-    return 'sample.sqlite3'
 
 
 def fetch_main(sql_db):
@@ -70,7 +23,7 @@ def fetch_main(sql_db):
 
     :type sql_db: str
     :param sql_db:
-    :rtype : object
+    :rtype : str
     """
 
     conn = sqlite3.connect(sql_db)
@@ -151,10 +104,10 @@ def validator():
     """
     validate the arguments giving through the commandline
 
-    :rtype : str
+    :rtype : list
     """
 
-    usage = "usage: python %prog [options] arg1 arg2"
+    usage = "usage: python %prog -i <input file> -o <output file>"
     parser = OptionParser(usage=usage)
     parser.add_option("-i", dest="input_file", help="give BOK file to read from")
     parser.add_option("-o", dest="output_file", help="the desired json output filename")
@@ -164,11 +117,9 @@ def validator():
 
     # TODO test the validation for options parsed
 
-    print len(args)
     # if len(args) < 4:
     #     parser.error("incorrect number of arguments")
 
-    # TODO validate the filetypes given for input and output before continuing
 
     bok_file = options.input_file
     bok_file_split = bok_file.split('.')
@@ -179,20 +130,86 @@ def validator():
         pass
     elif not json_file_split[-1] == 'json':
         print "Must provide json filetype for output"
-        return 0
+        pass
     else:
-        # TODO is there need to validate the .bok file itself?
-        return bok_file
+        return [bok_file, json_file]
+
+
+def db(bok_file):
+    """
+
+
+    :rtype : object
+    :param bok_file:
+    :return:
+    """
+    sql_db = bok_file.split('.')[0]
+    sql_db += ".db"
+
+    connection = sqlite3.connect(sql_db)
+
+    return [connection, sql_db]
+
+
+def export(bok_file):
+    """
+
+    :param bok_file:
+    """
+    database = bok_file[0]
+    DB = db(database)
+    con = DB[0]
+    sql_file = DB[1]
+    c = con.cursor()
+
+    # print 'setting charset....'
+    # subprocess.Popen(['MDB_JET3_CHARSET="cp1256"'])
+
+    # Dump the schema for the DB
+    print 'dumping msql schema....'
+    reply = subprocess.Popen(["mdb-schema", database, "mysql"],
+                             stdout=subprocess.PIPE).communicate()[0]
+    c.executescript(reply)
+    con.commit()
+
+    print 'dumping tables....'
+    table_names = subprocess.Popen(["mdb-tables", "-1", database],
+                                   stdout=subprocess.PIPE).communicate()[0]
+    tables = table_names.splitlines()
+
+    print 'begin executing mysql....'
+    c.execute("BEGIN;")
+    sys.stdout.flush()
+
+    for table in tables:
+        if table != '':
+            print 'dumping ' + table + '....'
+            reply = subprocess.Popen(["mdb-export", "-I", "mysql", database, table],
+                                     stdout=subprocess.PIPE).communicate()[0]
+            c.executescript(reply)
+
+    print 'committing it all to the database....'
+    con.commit()
+    sys.stdout.flush()
+    con.close()
+    return sql_file
+
+
+def index():
+    """
+    :rtype : object
+    """
+
+    # TODO automate process for indexing the document into Elasticsearch
+    pass
 
 
 if __name__ == "__main__":
+    if validator():
+        sql_db = export(validator())
+        files = validator()
+        json_data = fetch_main(sql_db)
+        f = open(files[1], 'w+')
+        f.write(json_data)
+        f.close()
 
-    sql_db = export(validator())
-
-    json_data = fetch_main(sql_db)
-
-    f = open('jsondata.json', 'w+')
-
-    f.write(json_data)
-
-    f.close()
