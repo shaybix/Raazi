@@ -6,7 +6,6 @@ import os
 
 from optparse import OptionParser
 
-# TODO need to set MDB_JET3_CHARSET="cp1256" some how
 # TODO create function for preparing ES bulk index
 
 
@@ -47,8 +46,6 @@ def fetch_main(sql_db):
 
 def fetch_body(book_id, c):
     """
-
-
     THE FUNCTION IS RESPONSIBLE FOR RETRIEVING USING THE ID OF A BOOK - THE FOLLOWING FIELDS:
 
     [nass]			Memo/Hyperlink (255),
@@ -118,7 +115,7 @@ def validator():
 
     options, args = parser.parse_args()
 
-    # TODO test the validation for options parsed
+    # TODO test adequate for validation for options parsed
 
     # if len(args) < 4:
     #     parser.error("incorrect number of arguments")
@@ -177,7 +174,7 @@ def export(files):
     c = con.cursor()
 
     os.environ['MDB_JET3_CHARSET'] = "cp1256"
-    
+
     # Dump the schema for the DB
     print database
     print 'dumping msql schema....'
