@@ -3,13 +3,12 @@ import json
 import sys
 import subprocess
 import os
+import codecs
 
 from optparse import OptionParser
 
-# TODO create function for preparing ES bulk index
 
-
-def fetch_main(sql_db):
+def fetch_main(sql_db, f):
     """
     THE FUNCTION IS RESPONSIBLE FOR RETRIEVING THE FOLLOWING FIELDS:
 
@@ -36,15 +35,29 @@ def fetch_main(sql_db):
     result = c.fetchall()[0]
 
     book_id = str(result[0])
+    book_title = result[1] if result[1] else ''
+    info = result[2] if result[2] else ''
+    book_info = result[3] if result[3] else ''
+    author = result[4] if result[4] else ''
 
-    content = dict(book_id=str(result[0]), book_title=result[1], info=result[2], book_info=result[3], author=result[4],
+    author_bio = result[5] if result[5] else ''
+    category = result[6] if result[6] else ''
+    died = str(result[7]) if str(result[7]) else ''
+
+    content = dict(book_id=book_id, book_title=result[1], info=result[2], book_info=result[3], author=result[4],
                    author_bio=result[5], category=result[6], died=str(result[7]),
-                   body=fetch_body(book_id, c), chapters=fetch_chapters(book_id, c))
+                   body=fetch_body(book_id, c, f), chapters=fetch_chapters(book_id, c, f))
+    # content = '{"book_id":' + book_id + ', "book_title":' + book_title + ', "info":' + info + ', "book_info":' + book_info + ',"author":' + author + ', "author_bio":' + author_bio + ', "category":' + category + ', "died":' + died + ', "body":'
 
-    return json.dumps(content, ensure_ascii=False)
+    # print json.dumps(content)
+    f.write(json.dumps(dict(index=dict(_index='maktabah', _type='books', _id=str(book_id)))))
+    f.write('\n')
+    f.write(json.dumps(content))
+    f.write('\n')
+    return content
 
 
-def fetch_body(book_id, c):
+def fetch_body(book_id, c, f):
     """
     THE FUNCTION IS RESPONSIBLE FOR RETRIEVING USING THE ID OF A BOOK - THE FOLLOWING FIELDS:
 
@@ -65,13 +78,18 @@ def fetch_body(book_id, c):
     body = []
 
     for row in result:
-        page = dict(page_id=str(row[0]), page_body=row[1], volume=row[2], page_number=str(row[3]))
+        page_id = str(row[0]) if str(row[0]) else ''
+        page_body = row[1] if row[1] else ''
+        volume = str(row[2]) if str(row[2]) else ''
+        page_number = str(row[3]) if str(row[3]) else ''
+
+        page = dict(page_id=page_id, page_body=page_body, volume=volume, page_number=page_number)
 
         body.append(page)
-    return json.dump(body, ensure_ascii=False)
+    return body
 
 
-def fetch_chapters(book_id, c):
+def fetch_chapters(book_id, c, f):
     """
     FUNCTIONALITY FOR RETRIEVING THE CHAPTERS AND HEADINGS AND THEIR DATA FROM THEIR TABLE IN THE DB.
 
@@ -93,52 +111,16 @@ def fetch_chapters(book_id, c):
     chapters = []
 
     for row in result:
-        chapter = dict(heading=row[0], heading_level=str(row[1]), sub_level=str(row[2]), page_id=str(row[3]))
+        heading = (row[0]) if (row[0]) else ''
+        heading_level = str(row[1]) if str(row[1]) else ''
+        sub_level = str(row[2]) if str(row[2]) else ''
+        page_id = str(row[3]) if str(row[3]) else ''
+
+        chapter = dict(heading=heading, heading_level=heading_level, sub_level=sub_level, page_id=page_id)
 
         chapters.append(chapter)
 
-    return json.dump(chapters, ensure_ascii=False)
-
-
-def validator():
-    """   validate the arguments giving through the commandline
-
-    :rtype : list
-    """
-
-    usage = "usage: python %prog -i <input file> -o <output file>"
-    parser = OptionParser(usage=usage)
-    parser.add_option("-i", dest="input_file", help="give BOK file to read from")
-    parser.add_option("-o", dest="output_file", help="the desired json output filename")
-    parser.add_option("-q", "--quiet", action="store_false", dest="verbose")
-    parser.add_option("--directory", dest="directory", help="give directory containing all the bok files")
-    options, args = parser.parse_args()
-
-    # TODO test adequate for validation for options parsed
-
-    # if len(args) < 4:
-    #     parser.error("incorrect number of arguments")
-
-    if options.input_file and options.output_file:
-        bok_file = options.input_file
-        bok_file_split = bok_file.split('.')
-        json_file = options.output_file
-        json_file_split = json_file.split('.')
-
-        if not bok_file_split[-1] == "bok":
-            print "Must provide bok filetype for input"
-            pass
-        elif not json_file_split[-1] == 'json':
-            print "Must provide json filetype for output"
-            pass
-        else:
-            return [bok_file, json_file]
-    elif options.directory:
-        extract_from_dir(options.directory)
-        pass
-    else:
-        print "some help should be printed here"
-        pass
+    return chapters
 
 
 def db_init(bok_file):
@@ -151,13 +133,14 @@ def db_init(bok_file):
     """
 
     db_file = bok_file.split('.')[0]
+    db_file = db_file.replace('bok', 'sql')
     db_file += ".db"
-
+    print db_file
     connection = sqlite3.connect(db_file)
     return [connection, db_file]
 
 
-def export(files):
+def export(file):
     """
     takes a list as a parameter at the moment, and takes the bok filename and passes on to export
     as mysql creating an sqlite3 database with the same filename.
@@ -168,8 +151,9 @@ def export(files):
     :param files:
     """
 
+
     # TODO needs refactoring as it accepts a list though not necessary!
-    database = files[0]
+    database = file
     DB = db_init(database)
     con = DB[0]
     sql_file = DB[1]
@@ -214,15 +198,6 @@ def export(files):
     return sql_file
 
 
-def index():
-    """
-    :rtype : object
-    """
-
-    # TODO automate process for indexing the document into Elasticsearch
-    pass
-
-
 def extract_from_dir(directory):
     bok_files = []
 
@@ -231,15 +206,37 @@ def extract_from_dir(directory):
 
     return bok_files
 
+
+DIR = 'bok/'
+
 if __name__ == "__main__":
 
+    files = extract_from_dir('bok')
 
+    count = 0
 
-    if validator():
-        sql_db = export(validator())
-        files = validator()
-        json_data = fetch_main(sql_db)
-        f = open(files[1], 'w+')
-        f.write(json_data)
+    for file in files:
+        print "\n--------------- EXPORTING " + file + " -----------------\n"
+        sql_file = export(DIR + file)
+        json_file = 'json/' + file.split('/')[0].split('.')[0] + '.txt'
+        f = codecs.open(json_file, 'w+')
+
+        json_data = fetch_main(sql_file, f)
         f.close()
+        json_file = '@' + json_file
+        output = subprocess.Popen(
+            ['curl', '-s', '-XPOST', 'elastic.dev:9200/_bulk', '--data-binary', json_file],
+            stdout=subprocess.PIPE).communicate()[0]
+        print output
+
+
+
+        #     files = export(validator())
+        #     files = validator()
+        #     json_data = fetch_main(sql_db)
+        #     f = open(files[1], 'w+')
+        #     f.write(json_data)
+        #     f.close()
+        # else:
+        #     pass
 
