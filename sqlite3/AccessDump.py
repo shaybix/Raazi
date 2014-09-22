@@ -5,7 +5,7 @@
 # It depends upon the mdbtools suite:
 #   http://sourceforge.net/projects/mdbtools/
 # Website:
-#   http://www.guyrutenberg.com/2012/07/16/sql-dump-for-ms-access-databases-mdb-files-on-linux/
+#   http://www.guyrutenberg.com/2012/07/16/sql-dump-for-ms-access-databases-mdb-downloads-on-linux/
 # MDB_JET3_CHARSET="cp1256" python AccessDump.py filename.bok | sqlite3 filename.mfth
 
 import sys, subprocess, os
