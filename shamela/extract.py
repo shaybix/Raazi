@@ -68,7 +68,7 @@ def fetch_body(book_id, c):
         page = dict(page_id=str(row[0]), page_body=row[1], volume=row[2], page_number=str(row[3]))
 
         body.append(page)
-    return json.dump(body, ensure_ascii=False)
+    return json.dumps(body, ensure_ascii=False)
 
 
 def fetch_chapters(book_id, c):
@@ -97,7 +97,7 @@ def fetch_chapters(book_id, c):
 
         chapters.append(chapter)
 
-    return json.dump(chapters, ensure_ascii=False)
+    return json.dumps(chapters, ensure_ascii=False)
 
 
 def validator():
@@ -149,9 +149,12 @@ def db_init(bok_file):
     :param bok_file:
     :return:
     """
-
+    print bok_file
     db_file = bok_file.split('.')[0]
-    db_file += ".db"
+    db_path = 'db'
+    db_file = db_file.split('/')[-1]
+    db_file = db_path + '/' + db_file
+    db_file +=  ".db"
 
     connection = sqlite3.connect(db_file)
     return [connection, db_file]
@@ -169,10 +172,13 @@ def export(files):
     """
 
     # TODO needs refactoring as it accepts a list though not necessary!
-    database = files[0]
-    DB = db_init(database)
-    con = DB[0]
-    sql_file = DB[1]
+    if len(files) > 2:
+        
+    #
+    # database = files[0]
+    # DB = db_init(database)
+    # con = DB[0]
+    # sql_file = DB[1]
     c = con.cursor()
 
     os.environ['MDB_JET3_CHARSET'] = "cp1256"
@@ -231,15 +237,17 @@ def extract_from_dir(directory):
 
     return bok_files
 
-if __name__ == "__main__":
 
+
+
+
+if __name__ == "__main__":
 
 
     if validator():
         sql_db = export(validator())
         files = validator()
         json_data = fetch_main(sql_db)
-        f = open(files[1], 'w+')
-        f.write(json_data)
+        f = open('json/' + files[1], 'w+')
+        f.write(json_data.encode('utf-8'))
         f.close()
-

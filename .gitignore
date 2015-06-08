@@ -3,4 +3,9 @@
 *.rar
 *.txt
 *.db
-
+*.sqlite3
+*.json
+bin/
+include/
+lib/
+local/
