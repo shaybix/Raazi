@@ -5,6 +5,13 @@ import subprocess
 import os
 
 from optparse import OptionParser
+from pymongo import MongoClient
+
+
+
+client = MongoClient('localhost', 32768)
+
+
 
 # TODO create function for preparing ES bulk index
 
@@ -40,6 +47,10 @@ def fetch_main(sql_db):
     content = dict(book_id=str(result[0]), book_title=result[1], info=result[2], book_info=result[3], author=result[4],
                    author_bio=result[5], category=result[6], died=str(result[7]),
                    body=fetch_body(book_id, c), chapters=fetch_chapters(book_id, c))
+
+
+
+
 
     return json.dumps(content, ensure_ascii=False)
 
@@ -172,19 +183,17 @@ def export(files):
     """
 
     # TODO needs refactoring as it accepts a list though not necessary!
-    if len(files) > 2:
-        
-    #
-    # database = files[0]
-    # DB = db_init(database)
-    # con = DB[0]
-    # sql_file = DB[1]
+
+
+    database = files[0]
+    DB = db_init(database)
+    con = DB[0]
+    sql_file = DB[1]
     c = con.cursor()
 
     os.environ['MDB_JET3_CHARSET'] = "cp1256"
 
     # Dump the schema for the DB
-    print database
     print 'dumping msql schema....'
 
     reply = subprocess.Popen(["mdb-schema", database, "mysql"],
@@ -233,9 +242,16 @@ def extract_from_dir(directory):
     bok_files = []
 
     for (dirpath, dirnames, filenames) in os.walk(directory):
-        bok_files.extend(filenames)
+        # bok_files.extend(filenames)
+        for file in filenames:
+            files = 'bok/' + file
+            bok_files.append(files)
 
     return bok_files
+    print bok_files
+
+
+
 
 
 
@@ -243,11 +259,24 @@ def extract_from_dir(directory):
 
 if __name__ == "__main__":
 
+    files = extract_from_dir('bok')
 
-    if validator():
-        sql_db = export(validator())
-        files = validator()
-        json_data = fetch_main(sql_db)
-        f = open('json/' + files[1], 'w+')
-        f.write(json_data.encode('utf-8'))
-        f.close()
+    for file in files:
+        filename = file.split('.')[0]
+        jsonfile = filename + '.json'
+
+        sql_db = export([file, jsonfile])
+        filez = [file, jsonfile]
+        fetch_main(sql_db)
+        print sql_db
+        print 'completed!'
+
+
+    # if validator():
+    #     sql_db = export(validator())
+    #     files = validator()
+    #     json_data = fetch_main(sql_db)
+    #     f = open('json/' + files[1], 'w+')
+    #     json_data = json_data.encode('utf-8')
+    #     f.write(json_data)
+    #     f.close()

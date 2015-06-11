@@ -7,13 +7,15 @@ import rarfile
 
 
 
+
+
 names = open('urls.txt', 'r').read()
 urls = open('urls.txt', 'r').read()
 # f = open('downloads.txt', 'a+')
 
 names = names.splitlines()
 urls = urls.splitlines()
-urls = urls[0:5]
+urls = urls[0:19]
 count = 0
 for url in urls:
 

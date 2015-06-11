@@ -1,4 +1,4 @@
-# Repository containing miscellaneous scripts
+# Repository of miscellaneous scripts
 
 
 ## Below each folder and its contents will be explained in brief.
@@ -25,4 +25,4 @@ Experimental stuff
 ### Elasticsearch
 
 
-Related to getting data from bok file to indexing it in ES. 
+Related to getting data from bok file to indexing it in ES.
