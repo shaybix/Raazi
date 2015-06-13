@@ -15,7 +15,7 @@ urls = open('urls.txt', 'r').read()
 
 names = names.splitlines()
 urls = urls.splitlines()
-urls = urls[0:19]
+urls = urls[0:99]
 count = 0
 for url in urls:
 
@@ -24,7 +24,7 @@ for url in urls:
     link = soup.find(id='content').contents[11].a.get('href')
 
 
-    print link
+    print link + ' ----- ' + str(count)
     subprocess.call(['wget', '-r', '-nd', '-P', 'downloads', link])
     # if not os.path.isfile("downloads/" + name + ".rar"):
 

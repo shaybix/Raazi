@@ -8,8 +8,8 @@ from pymongo import MongoClient
 
 client = MongoClient('localhost', 32768)
 
-db = client['test_database']
-collection = db['authors']
+db = client['books']
+collection = db['books']
 
 
 
@@ -23,24 +23,38 @@ for (dirpath, dirnames, filenames) in os.walk('db'):
             file = 'db/' + file
 
             conn = sqlite3.connect(file)
-            c = conn.cursor()
+            author_cursor = conn.cursor()
+            body_cursor = conn.cursor()
 
             # print file
-            c.execute('SELECT BkId, Bk, Betaka, Inf, Auth, AuthInf, cat, AD FROM main')
+            author_cursor.execute('SELECT BkId, Bk, Betaka, Inf, Auth, AuthInf, cat, AD FROM main')
 
-            result = c.fetchall()[0]
+            author_result = author_cursor.fetchall()[0]
 
-            book_id = str(result[0])
+            book_id = str(author_result[0])
+
+            body_cursor.execute('SELECT id, nass, part, page FROM b' + str(book_id) + '')
+
+            body_result = body_cursor.fetchall()
+
+            pages = []
+
+            for row in body_result:
+                page = dict(page_id=row[0], page_body=row[1], volume=row[2], page_number=row[3])
+
+                pages.append(page)
+
 
             content = {
-                        '_id': result[0],
-                        'book_title': result[1],
-                        'info': result[2],
-                        'book_info': result[3],
-                        'author': result[4],
-                        'author_bio': result[5],
-                        'category': result[6],
-                        'died': result[7]
+                        '_id': author_result[0],
+                        'book_title': author_result[1],
+                        'info': author_result[2],
+                        'book_info': author_result[3],
+                        'author': author_result[4],
+                        'author_bio': author_result[5],
+                        'category': author_result[6],
+                        'died': author_result[7],
+                        'content': pages
                         }
 
 
@@ -54,12 +68,14 @@ for (dirpath, dirnames, filenames) in os.walk('db'):
 
 
 
-# posts = collection.find()
-# for post in db.posts.find():
-#     # print dir(post)
-#     print post.get('book_title')
-#     print post.get('author')
-#     print post.get('died')
+
+# f = open('test.txt', 'a+')
+
+
+# post = db.posts.find_one({'_id': str(132)})
 #
-# print db.posts.retrieved
-# print db.posts.count
+# posts = db.posts.find({"_id": 61})
+#
+#
+# for post in posts:
+#     print post['_id']
