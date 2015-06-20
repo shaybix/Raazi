@@ -1,6 +1,8 @@
 .idea
 *.bok
+*.bok.1
 *.rar
+*.rar.1
 *.txt
 *.db
 *.sqlite3

@@ -15,7 +15,6 @@ urls = open('urls.txt', 'r').read()
 
 names = names.splitlines()
 urls = urls.splitlines()
-urls = urls[0:99]
 count = 0
 for url in urls:
 
