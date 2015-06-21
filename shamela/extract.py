@@ -247,12 +247,6 @@ def extract_from_dir(directory):
     # print bok_files
 
 
-
-
-
-
-
-
 if __name__ == "__main__":
 
     files = extract_from_dir('bok')
@@ -261,6 +255,16 @@ if __name__ == "__main__":
 
 
     count = 1
+    done_files = []
+
+
+    for (dirpath, dirnames, file_names) in os.walk('db'):
+        # bok_files.extend(filenames)
+        for found_file in file_names:
+
+            done_files.append(found_file)
+
+    count = int(len(done_files)) + int(count)
 
     for file in files:
 
@@ -268,18 +272,10 @@ if __name__ == "__main__":
         jsonfile = filename + '.json'
         db_file = filename.split('/')[1]
         db_file = db_file + '.db'
-        done_files = []
 
 
         if os.path.isfile('db/' + db_file) is False:
 
-            for (dirpath, dirnames, file_names) in os.walk('db'):
-                # bok_files.extend(filenames)
-                for found_file in file_names:
-
-                    done_files.append(found_file)
-
-            count = int(len(done_files)) + int(count)
 
             print "############### file " + str(count) + " ##############"
 
@@ -290,12 +286,17 @@ if __name__ == "__main__":
             # print sql_db
             # print 'completed!'
 
-            count = count + 1
 
         else:
             continue
 
 
+
+
+        count = count + 1
+        if count == 501:
+            print '#################### FINISHED 500 #################'
+            exit()
 
 
     # if validator():
