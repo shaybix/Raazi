@@ -1,15 +1,25 @@
 import subprocess
 import os
+from elasticsearch import Elasticsearch
 
-addr = 'http://elastic.dev:9200'
+client = Elasticsearch()
+
+
+
 
 files = []
 
-for (dirpath, dirnames, filenames) in os.walk('json'):
+for (dirpath, dirnames, filenames) in os.walk('downloads'):
         files.extend(filenames)
 
-for file in files:
-    print file
-    subprocess.call(['curl', '-s', '-XPOST', addr + '/_bulk', '--data-binary', '@' + 'json/' + file + ';'])
+        print len(files)
+        exit()
 
 
+
+
+
+
+# for file in files:
+#     print file
+#     subprocess.call(['curl', '-s', '-XPOST', addr + '/_bulk', '--data-binary', '@' + 'json/' + file + ';'])
