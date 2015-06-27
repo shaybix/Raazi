@@ -12,7 +12,7 @@ count = 1
 
 for (dirpath, dirnames, filenames) in os.walk('db'):
         files.extend(filenames)
-        # files = files[0:5]
+        files = files[0:20]
 
         for file in files:
 
@@ -45,16 +45,16 @@ for (dirpath, dirnames, filenames) in os.walk('db'):
                 if not isinstance(row[2], (int)):
                     row[2] = [None]
 
-                # content = {
-                #             '_id': author_result[0],
-                #             'book_title': author_result[1],
-                #             'info': author_result[2],
-                #             'book_info': author_result[3],
-                #             'author': author_result[4],
-                #             'author_bio': author_result[5],
-                #             'category': author_result[6],
-                #             'died': author_result[7],
-                #             }
+                content = {
+                            '_id': author_result[0],
+                            'book_title': author_result[1],
+                            'info': author_result[2],
+                            'book_info': author_result[3],
+                            'author': author_result[4],
+                            'author_bio': author_result[5],
+                            'category': author_result[6],
+                            'died': author_result[7],
+                            }
 
                 # TODO implement parent-child relationship between books and pages
 
@@ -64,7 +64,8 @@ for (dirpath, dirnames, filenames) in os.walk('db'):
                                 'book_id': author_result[0],
                                 'page_body': row[1],
                                 'volume': row[2],
-                                'page_number': row[3]
+                                'page_number': row[3],
+                                'book': content
                                 }
 
                 response = client.create(
@@ -72,7 +73,7 @@ for (dirpath, dirnames, filenames) in os.walk('db'):
                                 # REVIEW the id for the page needs looking at.
                                 id=str(author_result[0]) + '-' + str(row[0]),
                                 body=content_page,
-                                parent='books'
+                                # parent='books'
                                 doc_type='pages'
                                 )
 

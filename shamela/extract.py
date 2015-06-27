@@ -247,12 +247,16 @@ def extract_from_dir(directory):
     # print bok_files
 
 
+
+#############################################################################
+
+#############################################################################
+
+
 if __name__ == "__main__":
 
     files = extract_from_dir('bok')
     # print len(files)
-
-
 
     count = 1
     done_files = []
@@ -289,9 +293,6 @@ if __name__ == "__main__":
 
         else:
             continue
-
-
-
 
         count = count + 1
         if count == 501:
