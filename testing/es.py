@@ -12,7 +12,7 @@ count = 1
 
 for (dirpath, dirnames, filenames) in os.walk('db'):
         files.extend(filenames)
-        files = files[0:20]
+        files = files[201:300]
 
         for file in files:
 
@@ -73,7 +73,7 @@ for (dirpath, dirnames, filenames) in os.walk('db'):
                                 # REVIEW the id for the page needs looking at.
                                 id=str(author_result[0]) + '-' + str(row[0]),
                                 body=content_page,
-                                # parent='books'
+                                # parent='b`ooks'
                                 doc_type='pages'
                                 )
 
