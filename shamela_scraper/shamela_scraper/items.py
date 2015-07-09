@@ -11,4 +11,9 @@ import scrapy
 class ShamelaScraperItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+   
+    book_title = scrapy.Field()
+    book_link = scrapy.Field()
+    author = scrapy.Field()
+    author_link = scrapy.Field()
+    author_name = scrapy.Field()
