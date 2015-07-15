@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-
 import scrapy
 from scrapy import Spider
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from shamela_scraper.items import ShamelaScraperItem
-import sys
-
+from scrapy.http import Request
+from time import sleep
 
 
 class FirstSpider(CrawlSpider):
@@ -30,7 +29,7 @@ class FirstSpider(CrawlSpider):
         books = []
         author = {}
 
-
+        
         author['link'] = response.url
 
 
@@ -60,10 +59,16 @@ class FirstSpider(CrawlSpider):
         # item['book_link'] = sel.xpath('//td[@class="main_td"]/ol/li/a/@href').extract()
         book_title = response.xpath('//td[@class="main_td"]/ol/li/a/text()').extract()
         book_link = response.xpath('//td[@class="main_td"]/ol/li/a/@href').extract()
-        for title, link in zip(book_title, book_link):
-
+        title_links = zip(book_title, book_link)
+        
+        for title, link in title_links:
+            
+            # FIXME for some reason the for look is giving the link and title for each cycle 
             book['link'] = 'http://www.shamela.ws' + link
             book['title'] = title
+
+           # request = Request(book['link'])
+           # print request.xpath('//div[@id="content"]/descendant::a[2]').extract()
 
             books.append(book)
 
@@ -71,10 +76,35 @@ class FirstSpider(CrawlSpider):
         item['books'] = books
         item['author'] = author
 
+
+        
         print item
+        sleep(2)
         return  item
+
+
+        # --------------------------------------------------------- #
+
+
+        # TODO yield the returned links and fetch info for each book:
+        #   - title
+        #   - publisher
+        #   - number of volumes
+
+        # dont return the item but rather pass it on using meta= in the Request parameters.
+
+        # --------------------------------------------------------- #
 
 
         #for sel in response.xpath('//td[@class="main_td"]/ol/li'):
          #   link = sel.xpath('//a/@href').extract()
-          #  print link
+          #  print lin
+          
+          
+          
+          
+    def extract_book(self, response):
+
+        book_url = response.xpath('//div[@id="content"]/descendant::a[2]').extract()
+
+        return book_url

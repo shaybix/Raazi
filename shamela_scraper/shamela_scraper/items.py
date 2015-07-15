@@ -14,3 +14,6 @@ class ShamelaScraperItem(scrapy.Item):
     # name = scrapy.Field()
     books = scrapy.Field() 
     author = scrapy.Field()
+
+    
+
