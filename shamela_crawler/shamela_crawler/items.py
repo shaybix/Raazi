@@ -12,9 +12,9 @@ class ShamelaCrawlerItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     
-    author 	    = scrapy.Field()
-    book    	= scrapy.Field()
-    category	= scrapy.Field() 
+    website     = scrapy.Field()
+    date_of_scraping    = scrapy.Field()
+    data_scraped        = scrapy.Field() 
 
 
 class AuthorItem(scrapy.Item):
@@ -29,3 +29,4 @@ class BookItem(scrapy.Item):
     title       = scrapy.Field()
     publisher   = scrapy.Field()
     link        = scrapy.Field()
+    

@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
-from scrapy import Spider
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
-from shamela_crawler.items import ShamelaCrawlerItem
+from shamela_crawler.items import ShamelaCrawlerItem, BookItem, AuthorItem
 from scrapy.http import Request
-import time  
+import time 
+
+
 global count
+global parsed
+
 
 
 count = 1
+parsed = []
+
+
 
 
 class ShamelaSpider(CrawlSpider):
@@ -22,7 +28,7 @@ class ShamelaSpider(CrawlSpider):
     rules = [
             Rule(LinkExtractor(
                 allow=['http:\/\/www\.shamela\.ws\/index\.php\/category\/[0-9]*$']),
-                callback='parse_category'),
+                callback='parse_category_page'),
 
             Rule(LinkExtractor(
                 allow=['http:\/\/www\.shamela\.ws\/index\.php\/book\/[0-9]*$']))
@@ -35,7 +41,7 @@ class ShamelaSpider(CrawlSpider):
     # TODO extract links for individual categories and
     # yield Request setting a callback
     
-    def parse_category(self, response):
+    def parse_category_page(self, response):
         #item = ShamelaCrawlerItem()
         global count
         links = response.xpath('//td[@class="regular-book"]/a/@href').re(r'/index.php/book/[0-9]*$')
@@ -53,25 +59,43 @@ class ShamelaSpider(CrawlSpider):
             print '---------------' + str(count) + '---------------'
             print 'Book Url =====> ' + url 
             print 'Category =====> ' + str(response.url) + '\n\n'
-            #return Request(url=url, callback=self.parse_category)
+            yield Request(url=url, callback=self.parse_book_page)
             count = count + 1
 
 
         if pagination is None:
             print 'NO NEXT PAGE AVAILABLE'
         else:
-            go_to_page = response.xpath('//div[@class="center"]/a/@href').extract()[-2]
-            last_page = response.xpath('//div[@class="center"]/a/@href').extract()[-1]
+            current_page = response.url
+            go_to_page = 'http://www.shamela.ws' + response.xpath('//div[@class="center"]/a/@href').extract()[-2]
+            last_page = 'http://www.shamela.ws' + response.xpath('//div[@class="center"]/a/@href').extract()[-1]
+            next_page_number = int(go_to_page.split('-')[-1])
+            
+            print "JUST SCRAPED ========> [" + current_page + "]"
+            
+            
+            if current_page not in parsed and next_page_number != 1:
 
-
-            print go_to_page 
-            print last_page
-            print 'NEXT PAGE AVAILABLE'    
-    
-        
-        time.sleep(1)
+                yield Request(url=go_to_page, callback=self.parse_category_page)
+             
+            parsed.append(current_page)
 
  
     # TODO crawl and extract each book inside the category
+    # FIXME ensure books are nested in an author's books field
+
+
+    def parse_book_page(self, response):
+
+        download_link = response.xpath('//a/@href').re(r'http://shamela.ws/books/[0-9]*/[0-9]*.rar$')
+        
+        print  download_link
+        print 'i am inside the page of the BOOK!'
+
+
+
+
+    def parse_author_page():
+        pass
     
 
