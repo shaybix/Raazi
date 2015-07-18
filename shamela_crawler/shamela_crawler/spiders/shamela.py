@@ -38,8 +38,8 @@ class ShamelaSpider(CrawlSpider):
     
         
     
-    # TODO extract links for individual categories and
-    # yield Request setting a callback
+    # TODO extract author pages and callback to parse_author_page
+    
     
     def parse_category_page(self, response):
         #item = ShamelaCrawlerItem()
@@ -81,8 +81,8 @@ class ShamelaSpider(CrawlSpider):
             parsed.append(current_page)
 
  
-    # TODO crawl and extract each book inside the category
-    # FIXME ensure books are nested in an author's books field
+    
+    # TODO ensure books are nested in an author's books field
 
 
     def parse_book_page(self, response):
@@ -121,9 +121,13 @@ class ShamelaSpider(CrawlSpider):
         #print 'i am inside the page of the BOOK!'
 
 
-
+    
+    # TODO parse each author's page and return Item
 
     def parse_author_page():
         pass
     
 
+
+    # TODO somehow gather all items from all pages scraped - perhaps lookinto Pipelines in scrapy
+    # TODO refactor the code so the authors pages are scraped and books are extracted from there
