@@ -131,3 +131,6 @@ class ShamelaSpider(CrawlSpider):
 
     # TODO somehow gather all items from all pages scraped - perhaps lookinto Pipelines in scrapy
     # TODO refactor the code so the authors pages are scraped and books are extracted from there
+
+
+    
