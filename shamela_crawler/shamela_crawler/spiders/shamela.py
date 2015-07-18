@@ -4,7 +4,7 @@ from scrapy.linkextractors import LinkExtractor
 from shamela_crawler.items import ShamelaCrawlerItem, BookItem, AuthorItem
 from scrapy.http import Request
 import time 
-
+import re
 
 global count
 global parsed
@@ -87,10 +87,38 @@ class ShamelaSpider(CrawlSpider):
 
     def parse_book_page(self, response):
 
-        download_link = response.xpath('//a/@href').re(r'http://shamela.ws/books/[0-9]*/[0-9]*.rar$')
+        Book = BookItem()
+        links = {}
+        Book['title'] = response.xpath('//*[@id="content"]/div[2]/span[1]/span[2]/text()').extract()[0]
+        Book['publisher'] = response.xpath('//*[@id="content"]/div[2]/span[4]/span[2]/text()').extract()[0]
+
         
-        print  download_link
-        print 'i am inside the page of the BOOK!'
+        urls  = response.xpath('//div[@id="content"]/div[3]/a/@href').extract()
+        
+        for url in urls:
+        
+            if url.split('.')[-1] == 'rar':
+                links['Bok'] = url
+            
+            elif url.split('.')[-1] == 'epub':
+                links['Epub'] = url
+            
+            elif re.search('waqfeya', url):
+            
+                links['Pdf'] = url
+                
+        
+        Book['links'] = links
+        
+        print Book
+        
+        time.sleep(2)
+
+
+        #download_link = response.xpath('//a/@href').re(r'http://shamela.ws/books/[0-9]*/[0-9]*.rar$')
+        
+        #print  download_link
+        #print 'i am inside the page of the BOOK!'
 
 
 

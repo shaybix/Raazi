@@ -28,5 +28,5 @@ class AuthorItem(scrapy.Item):
 class BookItem(scrapy.Item):
     title       = scrapy.Field()
     publisher   = scrapy.Field()
-    link        = scrapy.Field()
+    links        = scrapy.Field()
     
