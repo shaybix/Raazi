@@ -127,6 +127,9 @@ class ShamelaSpider(CrawlSpider):
 
 
     def parse_author_page(self, response):
+        
+        global count 
+        
         books = BookItem()
 
         found_books = response.xpath('//div[@id="content"]/table/tr[4]/td[2]/ol/li/a')
@@ -134,20 +137,20 @@ class ShamelaSpider(CrawlSpider):
         #print found_books 
         #time.sleep(4)
         books['books'] = []
-        book = {}
         
 
         # FIXME the loop returns same data for each cycle creating duplicates
 
+
         for each in found_books:
         
+            book = {}
+            
             book['link'] = 'http://www.shamela.ws' + each.xpath('@href').extract()[0]
             book['title'] = each.xpath('text()').extract()[0]
-            
+    
             books['books'].append(book)
 
-        print books
-        time.sleep(3)
 
         
         Author = AuthorItem()
@@ -162,7 +165,16 @@ class ShamelaSpider(CrawlSpider):
 
         Author['full_name'] = response.xpath('//div[@id="content"]/table/tr[1]/td[2]/text()').extract()[0]
         
-        #return Author
+        
+        print '###################### [ ' + str(count) + ' ] ####################\n\n'
+        
+        print Author
+        
+        count = count + 1
+        
+
+
+        return Author
 
 
     
