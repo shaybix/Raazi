@@ -1,5 +1,4 @@
-# Repository of miscellaneous scripts
-
+# Repository of miscellaneous scripts [Deprecated now]
 
 ## Below each folder and its contents will be explained in brief.
 ###### please see relevant folder for indepth READ.md file.
